@@ -43,7 +43,7 @@ export const ChatbotView: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: textToSend }),
-        signal: AbortSignal.timeout(1500)
+        signal: AbortSignal.timeout(8000)
       });
 
       if (response.ok) {
