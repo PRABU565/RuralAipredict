@@ -42,7 +42,8 @@ export const ChatbotView: React.FC = () => {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: textToSend })
+        body: JSON.stringify({ message: textToSend }),
+        signal: AbortSignal.timeout(1500)
       });
 
       if (response.ok) {
@@ -62,9 +63,33 @@ export const ChatbotView: React.FC = () => {
         throw new Error('Server error');
       }
     } catch {
+      setActiveEngine('Offline Keywords');
+      const msg = textToSend.toLowerCase();
+      let reply = '';
+
+      if (msg.includes('crop') && (msg.includes('rainfall') || msg.includes('suit'))) {
+        reply = 'For high rainfall areas (>800mm), Rice and Sugarcane are highly recommended. For drier regions (<600mm), drought-resistant crops like Cotton, Bajra (Pearl Millet), Jowar (Sorghum), or Maize are best. Use the Smart Agriculture tab to run exact yield predictions.';
+      } else if (msg.includes('crop') && msg.includes('best')) {
+        reply = 'The best crop depends on the region. Southern regions (like Ramapuram) do best with Rice. Semi-arid areas (like Morachi Chincholi) do best with Bajra & Jowar. Highlands (like Kanthalloor) yield high returns on Tea & cold-climate Spices.';
+      } else if (msg.includes('rainfall') || msg.includes('weather')) {
+        reply = 'Our IoT ground sensors predict light to moderate rainfall. Farmers should consider delaying chemical spraying and open-field watering for 24-48 hours to conserve resources.';
+      } else if (msg.includes('fertilizer') || msg.includes('recommendation')) {
+        reply = 'For Rice, a standard NPK ratio of 4:2:1 is optimal, along with organic compost. For Cotton, apply nitrogen-rich fertilizers in stages. Refer to the Digital Twin kiosk for soil moisture telemetry.';
+      } else if (msg.includes('yield') && (msg.includes('improve') || msg.includes('increase'))) {
+        reply = 'Improve crop yields by: (1) Transitioning to micro-drip irrigation, (2) Practicing mulching, (3) Tuning sowing cycles to weather forecasts, and (4) Scanning leaves in the Agriculture module for disease diagnosis.';
+      } else if (msg.includes('scheme') || msg.includes('government')) {
+        reply = 'Key active schemes: PM-KISAN (direct cash support of ₹6,000/year), PM Fasal Bima Yojana (crop insurance), PM Krishi Sinchayee Yojana (micro-irrigation equipment subsidy), and local borewell recharge grants.';
+      } else if (msg.includes('disease') || msg.includes('blight') || msg.includes('leaf')) {
+        reply = 'High humidity combined with 28-32°C temps increases the risk of Leaf Blight. If observed, apply organic neem-oil extract. You can upload a leaf photo to the Agriculture Analytics module for diagnostic assistance.';
+      } else if (msg.includes('water') || msg.includes('irrigat')) {
+        reply = 'Semi-arid zones are experiencing low groundwater levels (35%). Drip irrigation can reduce water usage by up to 20%. Schedule watering during early mornings/evenings to reduce evaporation.';
+      } else {
+        reply = "I can help you with crop selection, fertilizer recommendations, weather forecasts, water saving methods, healthcare facilities, and government schemes. Try asking: 'Which crop is suitable for this rainfall?' or 'Tell me about government farming schemes.'";
+      }
+
       setMessages(prev => [...prev, {
         sender: 'bot',
-        message: "Connection issue — here's an offline tip: For high rainfall areas, Rice and Sugarcane are ideal. For dry zones, try Bajra or Jowar. Check the Agriculture Lab for detailed AI predictions.",
+        message: reply,
         timestamp: new Date().toLocaleTimeString(),
         source: 'fallback'
       }]);

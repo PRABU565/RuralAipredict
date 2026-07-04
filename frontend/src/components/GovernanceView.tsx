@@ -40,7 +40,7 @@ export const GovernanceView: React.FC<GovernanceViewProps> = ({ allVillages }) =
 
   // Fetch budgets from API
   useEffect(() => {
-    fetch('/api/budgets')
+    fetch('/api/budgets', { signal: AbortSignal.timeout(1500) })
       .then(res => res.json())
       .then(data => {
         setBudgets(data);

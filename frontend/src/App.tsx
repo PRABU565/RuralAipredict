@@ -45,7 +45,7 @@ export default function App() {
 
     const fetchVillages = async () => {
       try {
-        const response = await fetch('/api/villages');
+        const response = await fetch('/api/villages', { signal: AbortSignal.timeout(1500) });
         if (response.ok) {
           const data = await response.json();
           setVillages(data);

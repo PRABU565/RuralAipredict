@@ -39,7 +39,8 @@ export const AgricultureView: React.FC<AgricultureViewProps> = ({ selectedVillag
       const response = await fetch('/api/predict/crop', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(inputs)
+        body: JSON.stringify(inputs),
+        signal: AbortSignal.timeout(1500)
       });
       if (response.ok) {
         const data = await response.json();

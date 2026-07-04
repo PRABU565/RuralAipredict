@@ -34,7 +34,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ selectedVillage, allVi
 
     try {
       // Fetch automated insights from backend server report endpoint
-      const response = await fetch(`/api/reports/village/${selectedVillage.id}`);
+      const response = await fetch(`/api/reports/village/${selectedVillage.id}`, { signal: AbortSignal.timeout(1500) });
       let reportData;
       if (response.ok) {
         reportData = await response.json();

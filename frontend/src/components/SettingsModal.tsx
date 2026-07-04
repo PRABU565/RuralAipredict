@@ -61,8 +61,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, c
     for (const check of checks) {
       try {
         const options: RequestInit = check.method === 'POST'
-          ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(check.body) }
-          : {};
+          ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(check.body), signal: AbortSignal.timeout(1500) }
+          : { signal: AbortSignal.timeout(1500) };
 
         const res = await fetch(check.url, options);
         setApiStatus(prev => ({ ...prev, [check.key]: res.ok ? 'online' : 'offline' }));

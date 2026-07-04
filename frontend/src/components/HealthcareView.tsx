@@ -24,7 +24,8 @@ export const HealthcareView: React.FC = () => {
       const response = await fetch('/api/predict/health', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(inputs)
+        body: JSON.stringify(inputs),
+        signal: AbortSignal.timeout(1500)
       });
       if (response.ok) {
         const data = await response.json();
